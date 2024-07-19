@@ -1,0 +1,12 @@
+{
+  "name": "@zimoykin/library",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "repository": {
+    "url": "https://github.com/zimoykin/library-pkg.git"
+  },
+  "author": "Dmitry Zimoykin",
+  "license": "ISC",
+  "description": ""
+}
