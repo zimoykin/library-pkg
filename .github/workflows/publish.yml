@@ -18,8 +18,8 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@organizationName'
       - name: Install dependencies
-        run: yarn
+        run: npm ci
       - name: Publish package
-        run: yarn publish --access restricted
+        run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
