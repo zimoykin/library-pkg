@@ -58,8 +58,8 @@ jobs:
         run: npm ci 
         
       - name: Bump version
-        run: npm version patch
-        working-directory: libs/${{ matrix.package }}
+        working-directory: ${{ matrix.package }}
+        run: npm version patch  # or minor, or major
         
       - name: Push changes
         working-directory: ${{ matrix.package }}
