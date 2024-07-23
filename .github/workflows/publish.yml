@@ -92,9 +92,9 @@ jobs:
         run: |
           git fetch origin
 
-      - name: Rebase or merge with remote
+      - name: Pull latest changes
         run: |
-          git rebase origin/main || git merge origin/main
+          git pull origin main
 
       - name: Push changes
         run: |
