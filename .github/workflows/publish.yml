@@ -55,6 +55,14 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
       # Process each package in the matrix
+      - name: Check if package.json exists
+        working-directory: ${{ matrix.package }}
+        run: |
+          if [ ! -f package.json ]; then
+            echo "Error: package.json not found in ${{ matrix.package }}"
+            exit 1
+          fi
+
       - name: Install dependencies
         working-directory: ${{ matrix.package }}
         run: npm ci
@@ -63,27 +71,17 @@ jobs:
         working-directory: ${{ matrix.package }}
         run: |
           # Bump version manually
-          current_version=$(jq -r '.version' ${{ matrix.package }}/package.json)
+          current_version=$(jq -r '.version' package.json)
           IFS='.' read -r major minor patch <<< "$current_version"
           new_version="$major.$minor.$((patch + 1))"
-          jq --arg version "$new_version" '.version = $version' ${{ matrix.package }}/package.json > ${{ matrix.package }}/package.json.tmp
-          mv ${{ matrix.package }}/package.json.tmp ${{ matrix.package }}/package.json
+          jq --arg version "$new_version" '.version = $version' package.json > package.json.tmp
+          mv package.json.tmp package.json
           
           # Commit version bump
-          git add ${{ matrix.package }}/package.json
+          git add package.json
           git commit -m "chore(release): $new_version"
           git tag "v$new_version"
 
       - name: Push changes
         run: |
           git push --follow-tags origin main
-          
-      - name: Build the package
-        working-directory: ${{ matrix.package }}
-        run: npm run build
-        
-      - name: Publish package
-        working-directory: ${{ matrix.package }}
-        run: npm publish --access restricted
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
