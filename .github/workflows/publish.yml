@@ -20,6 +20,8 @@ jobs:
           scope: '@on-air-de'
       - name: Install dependencies
         run: npm ci
+      - name: Get directory
+        run: ls
       - name: Publish package
         working-directory: "lib/types"
         run: npm publish --access restricted
