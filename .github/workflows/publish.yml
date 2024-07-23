@@ -57,7 +57,7 @@ jobs:
         working-directory: ${{ matrix.package }}
         run: npm ci
       - name: Bump version
-        run: npm version patch -m "chore(release): %s [skip ci]"
+        run: npm version patch
         working-directory: libs/${{ matrix.package }}
       - name: Push changes
         working-directory: ${{ matrix.package }}
