@@ -16,8 +16,12 @@ jobs:
         id: packages
         run: |
           # Find all package.json files under libs and extract their directories
-          packages=$(find libs -name 'package.json' -exec dirname {} \; | jq -R . | jq -s .)
-          echo "::set-output name=packages::$packages"
+          packages=$(find libs -name 'package.json' -exec dirname {} \;)
+          echo "$packages" > packages.txt
+          # Format the output as JSON array
+          jq -R -s 'split("\n") | map(select(length > 0))' packages.txt > packages.json
+          cat packages.json
+          echo "::set-output name=packages::$(cat packages.json | jq -c .)"
 
   build:
     runs-on: ubuntu-latest
