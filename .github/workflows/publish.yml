@@ -55,14 +55,17 @@ jobs:
       # Process each package in the matrix
       - name: Install dependencies
         working-directory: ${{ matrix.package }}
-        run: npm ci
+        run: npm ci 
+        
       - name: Bump version
         run: npm version patch
         working-directory: libs/${{ matrix.package }}
+        
       - name: Push changes
         working-directory: ${{ matrix.package }}
         run: |
           git push --follow-tags origin main
+          
       - name: Build the package
         working-directory: ${{ matrix.package }}
         run: npm run build
