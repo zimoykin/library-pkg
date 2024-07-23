@@ -1,6 +1,6 @@
 {
   "name": "@zimoykin/library",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "index.ts",
   "repository": {
@@ -17,7 +17,7 @@
     "class-validator": "^0.14.1"
   },
   "scripts": {
-     "build": "nest build"
+    "build": "nest build"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
