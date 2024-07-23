@@ -24,6 +24,8 @@ jobs:
         run: npm ci
       - name: List root directory
         run: ls -R .
+      - name: Check .npmrc
+        run: cat ~/.npmrc
       - name: Publish package
         working-directory: "libs/types"
         run: npm publish --access restricted
