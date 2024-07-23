@@ -1,0 +1,23 @@
+{
+  "name": "@zimoykin/enums",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/core": "^9.0.0",
+    "@nestjs/platform-express": "^9.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1"
+  },
+  "scripts": {
+    "build": "nest build"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^9.0.0",
+    "@nestjs/schematics": "^9.0.0",
+    "typescript": "^4.5.4"
+  },
+  "author": "Dmitry Zimoykin",
+  "license": "ISC",
+  "description": ""
+}
