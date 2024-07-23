@@ -18,6 +18,8 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           # Defaults to the user or organization that owns the workflow file
           scope: '@on-air-de'
+      - name: Create .npmrc file
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
       - name: Install dependencies
         run: npm ci
       - name: List root directory
