@@ -57,14 +57,24 @@ jobs:
       # Process each package in the matrix
       - name: Install dependencies
         working-directory: ${{ matrix.package }}
-        run: npm ci 
-        
+        run: npm ci
+
       - name: Bump version
         working-directory: ${{ matrix.package }}
-        run: npm version patch -m "chore(release): %s [skip ci]"
-        
+        run: |
+          # Bump version manually
+          current_version=$(jq -r '.version' ${{ matrix.package }}/package.json)
+          IFS='.' read -r major minor patch <<< "$current_version"
+          new_version="$major.$minor.$((patch + 1))"
+          jq --arg version "$new_version" '.version = $version' ${{ matrix.package }}/package.json > ${{ matrix.package }}/package.json.tmp
+          mv ${{ matrix.package }}/package.json.tmp ${{ matrix.package }}/package.json
+          
+          # Commit version bump
+          git add ${{ matrix.package }}/package.json
+          git commit -m "chore(release): $new_version"
+          git tag "v$new_version"
+
       - name: Push changes
-        working-directory: ${{ matrix.package }}
         run: |
           git push --follow-tags origin main
           
