@@ -1,5 +1,5 @@
 {
-  "name": "types",
+  "name": "@on-air-de/types",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
