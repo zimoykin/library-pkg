@@ -82,6 +82,24 @@ jobs:
           git commit -m "chore(release): $new_version"
           git tag "v$new_version"
 
+      - name: Fetch remote changes
+        run: |
+          git fetch origin
+
+      - name: Rebase or merge with remote
+        run: |
+          git rebase origin/main || git merge origin/main
+
       - name: Push changes
         run: |
           git push --follow-tags origin main
+          
+      - name: Build the package
+        working-directory: ${{ matrix.package }}
+        run: npm run build
+        
+      - name: Publish package
+        working-directory: ${{ matrix.package }}
+        run: npm publish --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
