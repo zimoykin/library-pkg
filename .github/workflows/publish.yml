@@ -69,6 +69,7 @@ jobs:
       - name: Build the package
         working-directory: ${{ matrix.package }}
         run: npm run build
+        
       - name: Publish package
         working-directory: ${{ matrix.package }}
         run: npm publish --access restricted
