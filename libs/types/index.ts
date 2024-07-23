@@ -1,4 +1,1 @@
-export interface Test {
-    command: () => void;
-    result: string;
-}
+export  * from "./src/response-dto";
