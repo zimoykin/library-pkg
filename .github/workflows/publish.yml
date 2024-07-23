@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish package
-        working-directory: "lib/types"
+        working-directory: "./lib/types"
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
