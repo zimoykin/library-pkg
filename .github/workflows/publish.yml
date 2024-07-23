@@ -1,4 +1,4 @@
-name: Publish packages to GitHub Packages
+name: Version and Publish packages to GitHub Packages
 
 on:
   push:
@@ -80,7 +80,13 @@ jobs:
           # Commit version bump
           git add package.json
           git commit -m "chore(release): $new_version"
-          git tag "v$new_version"
+
+          # Check if tag exists and create a new one
+          if git rev-parse "v$new_version" >/dev/null 2>&1; then
+            echo "Tag v$new_version already exists. Skipping tag creation."
+          else
+            git tag "v$new_version"
+          fi
 
       - name: Fetch remote changes
         run: |
