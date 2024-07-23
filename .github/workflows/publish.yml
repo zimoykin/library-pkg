@@ -1,4 +1,4 @@
-name: Publish package to GitHub Packages
+name: Version and Publish package to GitHub Packages
 on:
   push:
     branches:
@@ -7,10 +7,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write  # Права на запись для коммитов и тегов
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure all history is fetched for versioning
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
@@ -24,6 +26,15 @@ jobs:
           echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
       - name: Install dependencies
         run: npm ci
+      - name: Bump version
+        run: npm version patch  # или minor, или major
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+      - name: Push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git push --follow-tags origin main
       - name: Build the package
         run: npm run build
       - name: Check .npmrc
