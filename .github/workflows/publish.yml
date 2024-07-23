@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@on-air-de'
+          scope: '@zimoykin'
       - name: Create .npmrc file in the project directory
         run: |
           echo "registry=https://npm.pkg.github.com" > .npmrc
