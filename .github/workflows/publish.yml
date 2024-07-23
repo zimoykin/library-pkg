@@ -16,8 +16,8 @@ jobs:
         id: packages
         run: |
           # Find all package.json files under libs and extract their directories
-          packages=$(find libs -name 'package.json' -exec dirname {} \;)
-          echo "::set-output name=packages::$(echo $packages | tr '\n' ' ')"
+          packages=$(find libs -name 'package.json' -exec dirname {} \; | jq -R . | jq -s .)
+          echo "::set-output name=packages::$packages"
 
   build:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        package: ${{ fromJson(needs.prepare.outputs.packages) }}
+        package: ${{ fromJSON(needs.prepare.outputs.packages) }}
     steps:
       - uses: actions/checkout@v4
         with:
