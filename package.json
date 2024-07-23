@@ -16,6 +16,9 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1"
   },
+  "scripts": {
+     "build": "nest build"
+  },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
