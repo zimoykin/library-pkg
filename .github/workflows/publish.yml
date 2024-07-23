@@ -23,7 +23,7 @@ jobs:
       - name: List root directory
         run: ls -R .
       - name: Publish package
-        working-directory: "lib/types"
+        working-directory: "libs/types"
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
