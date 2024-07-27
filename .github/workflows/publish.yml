@@ -104,7 +104,7 @@ jobs:
         run: npm run build
         
       - name: Publish package
-        working-directory: ${{ matrix.package }}/dist
+        working-directory: ${{ matrix.package }}
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
