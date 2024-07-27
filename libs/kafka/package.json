@@ -23,5 +23,8 @@
   },
   "author": "Dmitry Zimoykin",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "repository": {
+    "url": "https://github.com/zimoykin/library-pkg.git"
+  }
 }
