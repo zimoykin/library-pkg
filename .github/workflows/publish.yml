@@ -68,6 +68,12 @@ jobs:
         working-directory: ${{ matrix.package }}
         run: npm ci
 
+      - name: Fetch remote changes
+        run: git fetch origin
+
+      - name: Pull latest changes
+        run: git pull origin main --rebase  # Use rebase to integrate changes
+
       - name: Bump version
         working-directory: ${{ matrix.package }}
         run: |
@@ -89,12 +95,6 @@ jobs:
             git tag "v$new_version"
           fi
 
-      - name: Fetch remote changes
-        run: git fetch origin
-
-      - name: Pull latest changes
-        run: git pull origin main --rebase  # Use rebase to integrate changes
-
       - name: Push changes
         run: |
           git push --follow-tags origin main
@@ -104,7 +104,7 @@ jobs:
         run: npm run build
         
       - name: Publish package
-        working-directory: ${{ matrix.package }}
+        working-directory: ${{ matrix.package }}/dist
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
