@@ -39,6 +39,14 @@ export class KafkaConsumer implements OnModuleInit {
             this.instance?.run({
                 eachMessage: async ({ topic, message, partition }) => {
                     subscriber.next(message.value as T);
+                    return {
+                        then(onfulfilled, onrejected) {
+                            if (onfulfilled) {
+                                onfulfilled();
+                                KafkaModule.clearTopics(topic, message.offset.toString(), partition);
+                            }
+                        },
+                    };
                 },
                 autoCommit: true
             });
