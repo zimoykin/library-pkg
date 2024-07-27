@@ -1,20 +1,14 @@
 import { Module, DynamicModule, OnModuleInit, Provider, Logger } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import { KafkaCloudConsumer } from './kafka.consumer';
-import { KafkaCloudProducer } from './kafka.producer';
+import { KafkaConsumer } from './kafka.consumer';
+import { KafkaProducer } from './kafka.producer';
 import { getTopicToken } from './helpers/get-model-token';
-
-
-interface KafkaAsyncOptions {
-  imports: any[],
-  useFactory: (...args: any[]) => any;
-  inject?: any[];
-}
+import { KafkaAsyncOptions } from './interfaces/options.interface';
 
 // @Global()
 @Module({})
-export class KafkaCloudModule implements OnModuleInit {
-  readonly logger = new Logger(KafkaCloudModule.name);
+export class KafkaModule implements OnModuleInit {
+  readonly logger = new Logger(KafkaModule.name);
   static kafka: Kafka;
 
   async onModuleInit() {
@@ -23,13 +17,13 @@ export class KafkaCloudModule implements OnModuleInit {
   }
 
   static forRoot(clientId: string, brokers: string[]): DynamicModule {
-    if (!KafkaCloudModule.kafka) {
-      KafkaCloudModule.kafka = new Kafka({
+    if (!KafkaModule.kafka) {
+      KafkaModule.kafka = new Kafka({
         clientId: clientId,
         brokers: brokers
       });
 
-      KafkaCloudModule.kafka.admin({
+      KafkaModule.kafka.admin({
         retry: {
           retries: 100,
           factor: 1,
@@ -39,22 +33,22 @@ export class KafkaCloudModule implements OnModuleInit {
           },
         }
       });
-      return {
-        module: KafkaCloudModule
-      };
     }
+    return {
+      module: KafkaModule
+    };
   }
 
-  static forRootAsync(opts: KafkaCloudAsyncOptions): DynamicModule {
+  static forRootAsync(opts: KafkaAsyncOptions): DynamicModule {
     return {
-      module: KafkaCloudModule,
+      module: KafkaModule,
       imports: opts.imports,
       providers: [
         {
           provide: 'ASYNC_CONFIG',
           useFactory: async (...args) => {
             const config = await opts.useFactory(...args);
-            KafkaCloudModule.forRoot(config.clientId, config.brokers.split(','));
+            KafkaModule.forRoot(config.clientId, config.brokers.split(','));
             return config;
           },
           inject: opts.inject,
@@ -74,11 +68,11 @@ export class KafkaCloudModule implements OnModuleInit {
     const providers: Provider[] = [
       {
         provide: getTopicToken(topicName, 'consumer'),
-        useClass: KafkaCloudConsumer,
+        useClass: KafkaConsumer,
       },
       {
         provide: getTopicToken(topicName, 'producer'),
-        useClass: KafkaCloudProducer,
+        useClass: KafkaProducer,
       },
       {
         provide: 'topic',
@@ -98,7 +92,7 @@ export class KafkaCloudModule implements OnModuleInit {
     }
 
     return {
-      module: KafkaCloudModule,
+      module: KafkaModule,
       providers,
       exports: providers,
       global: true,

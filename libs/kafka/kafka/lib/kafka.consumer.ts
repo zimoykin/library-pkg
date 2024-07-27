@@ -1,22 +1,22 @@
 import { Inject, Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { Consumer } from 'kafkajs';
-import { KafkaCloudModule } from './kafka.module';
+import { KafkaModule } from './kafka.module';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class KafkaCloudConsumer implements OnModuleInit {
-    private readonly logger = new Logger(KafkaCloudConsumer.name);
+export class KafkaConsumer implements OnModuleInit {
+    private readonly logger = new Logger(KafkaConsumer.name);
     instance?: Consumer;
     constructor(
         @Inject('topic') private readonly topicName: string,
         @Optional() @Inject('groupId') private readonly groupId: string
     ) { }
     async onModuleInit() {
-        let group = `kafka-cloud:${this.topicName}`;
+        let group = `kafka-:${this.topicName}`;
         if (this.groupId) {
             group += `_${this.groupId}`;
         }
-        this.instance = KafkaCloudModule.kafka.consumer({
+        this.instance = KafkaModule.kafka.consumer({
             groupId: group,
             heartbeatInterval: 5000,
             allowAutoTopicCreation: true,

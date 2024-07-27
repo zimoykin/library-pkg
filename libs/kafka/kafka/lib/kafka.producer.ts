@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Producer } from 'kafkajs';
-import { KafkaCloudModule } from './kafka.module';
+import { KafkaModule } from './kafka.module';
 
 @Injectable()
 export class KafkaProducer implements OnModuleDestroy, OnModuleInit {
@@ -10,7 +10,7 @@ export class KafkaProducer implements OnModuleDestroy, OnModuleInit {
         @Inject('topic') private readonly topicName: string,
     ) { }
     onModuleInit() {
-        this.instance = KafkaCloudModule.kafka.producer({ allowAutoTopicCreation: true });
+        this.instance = KafkaModule.kafka.producer({ allowAutoTopicCreation: true });
         this.instance.connect();
     }
     onModuleDestroy() {
