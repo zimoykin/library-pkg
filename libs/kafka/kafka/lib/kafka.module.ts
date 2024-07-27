@@ -1,19 +1,26 @@
-import { Module, DynamicModule, OnModuleInit, Provider, Logger } from '@nestjs/common';
-import { Kafka } from 'kafkajs';
+import { Module, DynamicModule, Provider, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Admin, Kafka } from 'kafkajs';
 import { KafkaConsumer } from './kafka.consumer';
 import { KafkaProducer } from './kafka.producer';
 import { getTopicToken } from './helpers/get-model-token';
 import { KafkaAsyncOptions } from './interfaces/options.interface';
 
-// @Global()
 @Module({})
-export class KafkaModule implements OnModuleInit {
+export class KafkaModule implements OnModuleDestroy, OnModuleInit {
   readonly logger = new Logger(KafkaModule.name);
   static kafka: Kafka;
+  static admin: Admin;
+
+  async onModuleDestroy() {
+    if (KafkaModule.admin) {
+      KafkaModule.admin.disconnect();
+    }
+  }
 
   async onModuleInit() {
-    // this.logger.debug(`Module initialized`);
-    // KafkaCloudModule.kafka.logger().debug(`Kafka initialized`);
+    if (!KafkaModule.admin && KafkaModule.kafka) {
+      KafkaModule.admin = KafkaModule.kafka.admin();
+    }
   }
 
   static forRoot(clientId: string, brokers: string[]): DynamicModule {
@@ -97,5 +104,19 @@ export class KafkaModule implements OnModuleInit {
       exports: providers,
       global: true,
     };
+  }
+
+  static async clearTopics(topic: string, offset: string, partition: number): Promise<void> {
+    if (KafkaModule.admin) {
+      const admin = KafkaModule.admin;
+      await admin.listTopics();
+      await admin.deleteTopicRecords({
+        topic: topic,
+        partitions: [{
+          offset: String(Number(offset) - 1),
+          partition: partition
+        }]
+      });
+    }
   }
 }
