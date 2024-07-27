@@ -113,7 +113,7 @@ jobs:
         run: cp package-lock.json dist/
         
       - name: Publish package
-        working-directory: ${{ matrix.package }}
+        working-directory: ${{ matrix.package }}/dist
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
