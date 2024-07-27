@@ -102,6 +102,14 @@ jobs:
       - name: Build the package
         working-directory: ${{ matrix.package }}
         run: npm run build
+
+      - name: Copy package.json to dist folder
+        working-directory: ${{ matrix.package }}
+        run: cp package.json dist/
+
+      - name: Copy package-lock.json to dist folder
+        working-directory: ${{ matrix.package }}
+        run: cp package-lock.json dist/
         
       - name: Publish package
         working-directory: ${{ matrix.package }}
