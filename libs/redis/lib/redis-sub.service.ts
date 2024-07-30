@@ -1,8 +1,9 @@
-import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { Redis } from 'ioredis';
+import { Observable } from "rxjs";
 
 @Injectable()
-export class RedisSubService implements OnModuleInit {
+export class RedisSubService {
     private readonly logger: Logger = new Logger(RedisSubService.name);
 
     constructor(
@@ -10,18 +11,15 @@ export class RedisSubService implements OnModuleInit {
         @Inject('REDIS_TOPIC') private readonly topic: string
     ) { }
 
-    async onModuleInit() {
-        this.logger.debug(`Redis client(sub) connected to ${this.topic}`);
-        this.redis.subscribe(this.topic, (message) => {
-            this.logger.debug(`Redis client subscribed to ${this.topic} - ${message}`);
+    async subscribe<T>(cb: (data: T) => void) {
+        await this.redis.subscribe(this.topic);
+        const observable = new Observable<T>((subscriber) => {
+            this.redis.on('message', (channel, message) => {
+                this.logger.debug(`Received message ${message} on channel ${channel}`);
+                subscriber.next(message as T);
+            });
         });
-    }
-    subscribeToMessages() {
-        this.redis.subscribe(this.topic);
-        this.redis.on('message', (channel, message) => {
-            if (channel === this.topic) {
-                console.log(`Received message from topic ${this.topic}: ${message}`);
-            }
-        });
+
+        return observable.subscribe(cb);
     }
 }
