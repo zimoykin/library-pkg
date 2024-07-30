@@ -1,6 +1,6 @@
+import { BarType } from "../bar-type.enum";
 import { BaseModel } from "../base.model";
 import { Column, DataType, Table } from "sequelize-typescript";
-import { BarType } from "../../../enums";
 
 
 @Table
