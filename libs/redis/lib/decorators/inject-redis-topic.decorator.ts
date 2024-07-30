@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { getRedisPubToken, getRedisSubToken } from "./get-topic-token";
+import { getRedisPubToken, getRedisSubToken } from "../get-topic-token";
 
 export const InjectSubRedisTopic = (topicName: string) => Inject(getRedisSubToken(topicName));
 
