@@ -13,12 +13,13 @@ import global module on `AppModule`
 ```typescript
 @Module({
   imports: [
-    KafkaModule.forRootAsync({
+    RedisModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService<ConfigVariables>) => {
         return {
-          clientId: config.get('KAFKA_CLIENT_ID'),
-          brokers: config.get('KAFKA_BROKERS')
+          host: config.get('REDIS_HOST'),
+          port: config.get('REDIS_PORT'),
+          password: config.get("REDIS_PASSWORD"),
         };
       },
       inject: [ConfigService]
