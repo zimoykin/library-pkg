@@ -1,6 +1,6 @@
 import { BaseModel } from "lib/base.model";
 import { Column, Table } from "sequelize-typescript";
-import { USER_ROLES } from "@zimoykin/enums";
+import {  } from "@zimoykin/enums";
 
 
 @Table

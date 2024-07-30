@@ -1,34 +1,36 @@
 {
-    "name": "@zimoykin/models",
-    "version": "1.0.0",
-    "main": "index.js",
-    "dependencies": {
-        "@nestjs/common": "^9.0.0",
-        "@nestjs/core": "^9.0.0",
-        "@nestjs/platform-express": "^9.0.0",
-        "@nestjs/sequelize": "^10.0.1",
-        "@zimoykin/enums": "^1.0.33",
-        "class-transformer": "^0.5.1",
-        "class-validator": "^0.14.1",
-        "ioredis": "^5.4.1",
-        "rxjs": "^7.8.1",
-        "sequelize": "^6.37.3",
-        "sequelize-typescript": "^2.1.6",
-        "uuid": "^10.0.0"
-    },
-    "scripts": {
-        "build": "nest build"
-    },
-    "devDependencies": {
-        "@nestjs/cli": "^9.0.0",
-        "@nestjs/schematics": "^9.0.0",
-        "@types/uuid": "^10.0.0",
-        "typescript": "^4.5.4"
-    },
-    "author": "Dmitry Zimoykin",
-    "license": "ISC",
-    "description": "",
-    "repository": {
-        "url": "https://github.com/zimoykin/library-pkg.git"
-    }
+  "name": "@zimoykin/models",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/core": "^9.0.0",
+    "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/sequelize": "^10.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "ioredis": "^5.4.1",
+    "rxjs": "^7.8.1",
+    "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
+    "uuid": "^10.0.0"
+  },
+  "peerDependencies": {
+    "@zimoykin/enums": "^1.0.33"
+  },
+  "scripts": {
+    "build": "nest build"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^9.0.0",
+    "@nestjs/schematics": "^9.0.0",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^4.5.4"
+  },
+  "author": "Dmitry Zimoykin",
+  "license": "ISC",
+  "description": "",
+  "repository": {
+    "url": "https://github.com/zimoykin/library-pkg.git"
+  }
 }
