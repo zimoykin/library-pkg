@@ -1,6 +1,6 @@
 {
   "name": "@zimoykin/enums",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "main": "index.js",
   "dependencies": {
     "@nestjs/common": "^9.0.0",
