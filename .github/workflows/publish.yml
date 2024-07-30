@@ -111,6 +111,14 @@ jobs:
       - name: Copy package-lock.json to dist folder
         working-directory: ${{ matrix.package }}
         run: cp package-lock.json dist/
+
+      - name: Copy readme.md into dist folder
+        working-directory: ${{ matrix.package }}
+        run: cp README.md dist/
+
+      - name: Copy LICENSE into dist folder
+        working-directory: ${{ matrix.package }}
+        run: cp LICENSE dist/
         
       - name: Publish package
         working-directory: ${{ matrix.package }}/dist
