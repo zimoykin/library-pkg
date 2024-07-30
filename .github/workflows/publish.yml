@@ -112,11 +112,13 @@ jobs:
         working-directory: ${{ matrix.package }}
         run: cp package-lock.json dist/
 
-      - name: Copy readme.md into dist folder
+      - name: Copy README.md into dist folder
+        continue-on-error: true
         working-directory: ${{ matrix.package }}
         run: cp README.md dist/
 
       - name: Copy LICENSE into dist folder
+        continue-on-error: true
         working-directory: ${{ matrix.package }}
         run: cp LICENSE dist/
         
