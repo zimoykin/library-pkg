@@ -1,23 +1,33 @@
-# HOW TO USE
-
 This is module of nestjs app is using to subscribe and publish message on kafka
 
 ## Installation
+
+```bash
+# to install use npm, don't forget to use .npmrc in riit directory of repo
+npm install @zimoykin/kafka
+```
+
+# HOW TO USE
 
 import global module on `AppModule`
 ```typescript
 @Module({
   imports: [
-    KafkaModule.forRootAsync({
+    // IMPORT HERE
+    RedisModule.forRoot('127.0.0.1', 6379, 'default', 'quizz'),
+    // OR ASYNC WAY (preferable)
+    RedisModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService<ConfigVariables>) => {
-        return {
-          clientId: config.get('KAFKA_CLIENT_ID'),
-          brokers: config.get('KAFKA_BROKERS')
-        };
-      },
-      inject: [ConfigService]
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<KafkaCloudConfigVariables>) => {
+        const host = config.get<string>('REDIS_HOST')!;
+        const port = config.get<number>('REDIS_PORT')!;
+        const username = config.get<string>('REDIS_USERNAME')!;
+        const password = config.get<string>('REDIS_PASSWORD')!;
+        return { host, port, username, password };
+      }
     }),
+
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: serviceSchema
@@ -34,15 +44,11 @@ export class AppModule { }
 put topic into module
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { KafkaModule } from './kafka.module';
-import { QuizzController } from './quizz.controller';
-import { QuizzService } from './quizz.service';
 
 @Module({
   imports: [
-    KafkaModule.forFeature('foo-updated'),
-    KafkaModule.forFeature('quizz-updated'),
+    RedisModule.forFeature('foo-updated'),
+    RedisModule.forFeature('quizz-updated'),
     ],
   controllers: [QuizzController],
   providers: [QuizzService]
@@ -56,21 +62,13 @@ export class QuizzModule { }
 export class QuizzService implements OnModuleInit {
     private readonly logger = new Logger(QuizzService.name);
     constructor(
-        @InjectConsumer('quizz-updated') private readonly consumer: KafkaConsumer,
-        @InjectProducer('quizz-updated') private readonly producerQuizz: KafkaProducer,
-        @InjectProducer('foo-updated') private readonly producerFoo: KafkaProducer,
+        @InjectPubRedisTopic(Quizz.name.toLowerCase()) private readonly pubRedis: RedisPubService
     ) { }
 
-    onModuleInit() {
-        this.logger.debug(`Consumer subscribed to topic ${Quizz.name}`);
-        this.consumer.listen(data => {
-            this.logger.debug(`Received message ${data} on topic ${Quizz.name}`);
-        });
-    }
+    onModuleInit() {  }
 
     async publish(data: Record<string, any>) {
-        await this.producerQuizz.send({ entityName: Quizz.name, ...data });
-        await this.producerFoo.send({ entityName: Foo.name, ...data });
+        await this.pubRedis.send(Quizz.name.toLowerCase(), { entityName: Foo.name, ...data });
     }
 }
 ```
