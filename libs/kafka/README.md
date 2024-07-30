@@ -1,6 +1,6 @@
 # HOW TO USE
 
-This module is used to manage quizzes. It integrates with Kafka for messaging and provides the necessary controllers and services for handling quiz-related operations.
+This is module of nestjs app is using to subscribe and publish message on kafka
 
 ## Installation
 
@@ -40,7 +40,10 @@ import { QuizzController } from './quizz.controller';
 import { QuizzService } from './quizz.service';
 
 @Module({
-  imports: [KafkaModule.forFeature(Quizz.name)], // or [KafkaModule.forFeature("on-create-quizz", "main")]
+  imports: [
+    KafkaModule.forFeature('foo-updated'),
+    KafkaModule.forFeature('quizz-updated'),
+    ],
   controllers: [QuizzController],
   providers: [QuizzService]
 })
@@ -53,9 +56,9 @@ export class QuizzModule { }
 export class QuizzService implements OnModuleInit {
     private readonly logger = new Logger(QuizzService.name);
     constructor(
-        @InjectConsumer(Quizz.name) private readonly consumer: KafkaConsumer,
-        @InjectProducer(Quizz.name) private readonly producerQuizz: KafkaProducer,
-        @InjectProducer(Foo.name) private readonly producerFoo: KafkaProducer,
+        @InjectConsumer('quizz-updated') private readonly consumer: KafkaConsumer,
+        @InjectProducer('quizz-updated') private readonly producerQuizz: KafkaProducer,
+        @InjectProducer('foo-updated') private readonly producerFoo: KafkaProducer,
     ) { }
 
     onModuleInit() {
