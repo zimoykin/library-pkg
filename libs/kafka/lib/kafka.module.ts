@@ -8,8 +8,8 @@ import { KafkaAsyncOptions } from './interfaces/options.interface';
 @Module({})
 export class KafkaModule implements OnModuleDestroy, OnModuleInit {
   readonly logger = new Logger(KafkaModule.name);
-  static kafka: Kafka;
-  static admin: Admin;
+  private static kafka: Kafka; //singletone
+  private static admin: Admin;
 
   async onModuleDestroy() {
     if (KafkaModule.admin) {
@@ -41,27 +41,39 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
         }
       });
     }
+
+    const providers: Provider[] = [
+      {
+        provide: 'KAFKA_CONNECTION',
+        useValue: KafkaModule.kafka
+      }
+    ];
+
     return {
-      module: KafkaModule
+      module: KafkaModule,
+      providers: providers,
+      exports: providers,
     };
   }
 
   static forRootAsync(opts: KafkaAsyncOptions): DynamicModule {
     return {
       module: KafkaModule,
-      imports: opts.imports,
+      imports: opts.imports ?? [],
+      global: true,
       providers: [
         {
-          provide: 'ASYNC_CONFIG',
+          provide: 'KAFKA_CONNECTION',
           useFactory: async (...args) => {
             const config = await opts.useFactory(...args);
+            //define kafka instance  if not exists
             KafkaModule.forRoot(config.clientId, config.brokers.split(','));
-            return config;
+            return KafkaModule.kafka;
           },
           inject: opts.inject,
         },
       ],
-      exports: ['ASYNC_CONFIG'],
+      exports: ['KAFKA_CONNECTION'],
     };
   }
   /**

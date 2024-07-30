@@ -1,16 +1,16 @@
 import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Producer } from 'kafkajs';
-import { KafkaModule } from './kafka.module';
+import { Kafka, Producer } from 'kafkajs';
 
 @Injectable()
 export class KafkaProducer implements OnModuleDestroy, OnModuleInit {
     private readonly logger = new Logger(KafkaProducer.name);
-    instance? : Producer;
+    private instance?: Producer;
     constructor(
         @Inject('topic') private readonly topicName: string,
+        @Inject('KAFKA_CONNECTION') private readonly kafka: Kafka,
     ) { }
     onModuleInit() {
-        this.instance = KafkaModule.kafka.producer({ allowAutoTopicCreation: true });
+        this.instance = this.kafka.producer({ allowAutoTopicCreation: true });
         this.instance.connect();
     }
     onModuleDestroy() {

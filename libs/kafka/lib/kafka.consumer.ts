@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
-import { Consumer } from 'kafkajs';
-import { KafkaModule } from './kafka.module';
+import { Consumer, Kafka } from 'kafkajs';
 import { Observable } from 'rxjs';
+import { KafkaModule } from './kafka.module';
 
 @Injectable()
 export class KafkaConsumer implements OnModuleInit {
@@ -9,6 +9,7 @@ export class KafkaConsumer implements OnModuleInit {
     instance?: Consumer;
     constructor(
         @Inject('topic') private readonly topicName: string,
+        @Inject('KAFKA_CONNECTION') private readonly kafka: Kafka,
         @Optional() @Inject('groupId') private readonly groupId: string
     ) { }
     async onModuleInit() {
@@ -16,7 +17,7 @@ export class KafkaConsumer implements OnModuleInit {
         if (this.groupId) {
             group += `_${this.groupId}`;
         }
-        this.instance = KafkaModule.kafka.consumer({
+        this.instance = this.kafka.consumer({
             groupId: group,
             heartbeatInterval: 5000,
             allowAutoTopicCreation: true,
@@ -43,6 +44,7 @@ export class KafkaConsumer implements OnModuleInit {
                         then(onfulfilled, onrejected) {
                             if (onfulfilled) {
                                 onfulfilled();
+                                // TODO: investigate why 
                                 KafkaModule.clearTopics(topic, message.offset.toString(), partition);
                             }
                         },
