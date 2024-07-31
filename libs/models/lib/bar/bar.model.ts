@@ -1,15 +1,15 @@
 import { BarType } from "../bar-type.enum";
 import { BaseModel } from "../base.model";
-import { Column, DataType, Table } from "sequelize-typescript";
+import { Column, Entity } from "typeorm";
 
 
-@Table
-export class Bar extends BaseModel<Bar> {
+@Entity({ name: 'bars' })
+export class Bar extends BaseModel {
 
-    @Column
+    @Column({ unique: true, type: 'varchar', length: 30 })
     name: string;
 
-    @Column(DataType.ENUM({ values: Object.values(BarType) }))
+    @Column({ enumName: 'bar_types', enum: BarType, default: BarType.First })
     type: BarType;
 
     constructor(name: string, type?: BarType) {

@@ -1,10 +1,13 @@
 import { BaseModel } from "lib/base.model";
-import { Column, Table } from "sequelize-typescript";
+import { Column, Entity } from "typeorm";
 
-@Table
-export class Foo extends BaseModel<Foo> {
+@Entity({
+    name: 'foos',
+    schema: 'public'
+})
+export class Foo extends BaseModel {
 
-    @Column
+    @Column({ unique: true, type: 'varchar', length: 30 })
     name: string;
 
     constructor(name: string) {
