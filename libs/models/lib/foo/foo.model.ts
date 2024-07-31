@@ -1,4 +1,4 @@
-import { BaseModel } from "lib/base.model";
+import { BaseModel } from "../base.model";
 import { Column, Entity } from "typeorm";
 
 @Entity({
