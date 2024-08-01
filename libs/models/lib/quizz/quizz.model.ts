@@ -1,4 +1,4 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, Repository } from "typeorm";
 import { BaseModel } from "../base.model";
 
 @Entity({ name: 'quizz' })
@@ -18,3 +18,5 @@ export class Quizz extends BaseModel {
     }
 
 }
+
+export type QuizzRepository = Repository<Quizz & BaseModel>;

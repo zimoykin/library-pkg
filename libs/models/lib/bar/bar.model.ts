@@ -1,7 +1,7 @@
 import { Foo } from "../foo/foo.model";
 import { BarType } from "../bar-type.enum";
 import { BaseModel } from "../base.model";
-import { Column, Entity, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, Repository } from "typeorm";
 
 
 @Entity({ name: 'bars' })
@@ -14,12 +14,15 @@ export class Bar extends BaseModel {
     type: BarType;
 
     @OneToOne(() => Foo, foo => foo.id, { cascade: true })
-    fooId: string;
+    @JoinColumn()
+    foo: Foo;
 
-    constructor(name: string, fooId: string, type?: BarType) {
+    constructor(name: string, foo: Foo, type?: BarType) {
         super();
         this.name = name;
-        this.fooId = fooId;
+        this.foo = foo;
         this.type = type ?? BarType.First;
     }
 }
+
+export type BarRepository = Repository<Bar & BaseModel>;

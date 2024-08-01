@@ -1,17 +1,22 @@
 import { BaseModel } from "../base.model";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, Repository } from "typeorm";
 
 @Entity({
-    name: 'foos',
-    schema: 'public'
+    name: 'foos'
 })
 export class Foo extends BaseModel {
 
-    @Column({ unique: true, type: 'varchar', length: 30 })
-    name: string;
+    @Column({ unique: true })
+    quiestion: string;
 
-    constructor(name: string) {
+    @Column({ unique: true })
+    answer: string;
+
+    constructor(quiestion: string, answer: string) {
         super();
-        this.name = name;
+        this.quiestion = quiestion;
+        this.answer = answer;
     }
 }
+
+export type FooRepository = Repository<Foo & BaseModel>;
