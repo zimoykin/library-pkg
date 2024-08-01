@@ -7,14 +7,14 @@ import { Column, Entity, Repository } from "typeorm";
 export class Foo extends BaseModel {
 
     @Column({ unique: true })
-    quiestion: string;
+    question: string;
 
     @Column({ unique: true })
     answer: string;
 
-    constructor(quiestion: string, answer: string) {
+    constructor(question: string, answer: string) {
         super();
-        this.quiestion = quiestion;
+        this.question = question;
         this.answer = answer;
     }
 }
