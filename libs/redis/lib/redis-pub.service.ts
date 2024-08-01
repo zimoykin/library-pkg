@@ -10,7 +10,7 @@ export class RedisPubService {
         @Inject('REDIS_TOPIC') private readonly topic: string
     ) { }
 
-    async publish(topic: string, message: string) {
-        return this.redis.publish(topic, message);
+    async publish(message: string) {
+        return this.redis.publish(this.topic, message);
     }
 }

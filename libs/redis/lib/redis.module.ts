@@ -11,16 +11,13 @@ export class RedisModule {
   private static pub: Redis;
   private static sub: Redis;
 
-  private static makeRedis(opt?: { host?: string, port?: number, username?: string, password?: string; }) {
+  private static makeRedis(opt?: { host?: string, port?: number, password?: string; }) {
     const connectionProperties = {};
     if (opt?.host) {
       connectionProperties['host'] = opt.host;
     }
     if (opt?.port) {
       connectionProperties['port'] = opt.port;
-    }
-    if (opt?.username) {
-      connectionProperties['username'] = opt.username;
     }
     if (opt?.password) {
       connectionProperties['password'] = opt.password;
@@ -41,11 +38,11 @@ export class RedisModule {
 
   static forRoot(host: string, port: number, username: string, password: string): DynamicModule {
     if (!RedisModule.pub) {
-      const redis = this.makeRedis({ host, port, username, password });
+      const redis = this.makeRedis({ host, port, password });
       RedisModule.pub = redis;
     }
     if (!RedisModule.sub) {
-      const redis = this.makeRedis({ host, port, username, password });
+      const redis = this.makeRedis({ host, port, password });
       RedisModule.sub = redis;
     }
     const providers: Provider[] = [
@@ -82,7 +79,7 @@ export class RedisModule {
           useFactory: async (...args) => {
             const config = opts.useFactory(...args);
             if (!RedisModule.sub) {
-              const redis = this.makeRedis({ host: config.host, port: config.port, username: config.username, password: config.password });
+              const redis = this.makeRedis({ host: config.host, port: config.port, password: config.password });
               RedisModule.sub = await this.connection(redis);
             }
             return RedisModule.sub;
@@ -94,7 +91,7 @@ export class RedisModule {
           useFactory: async (...args) => {
             const config = opts.useFactory(...args);
             if (!RedisModule.sub) {
-              const redis = this.makeRedis({ host: config.host, port: config.port, username: config.username, password: config.password });
+              const redis = this.makeRedis({ host: config.host, port: config.port, password: config.password });
               RedisModule.pub = await this.connection(redis);
             }
             return RedisModule.pub;
