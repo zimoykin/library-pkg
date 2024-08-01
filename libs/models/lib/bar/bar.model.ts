@@ -13,7 +13,7 @@ export class Bar extends BaseModel {
     @Column({ enumName: 'bar_types', enum: BarType, default: BarType.First })
     type: BarType;
 
-    @OneToOne(() => Foo, foo => foo.id, { cascade: true })
+    @OneToOne(() => Foo, foo => foo.id, { cascade: true, eager: true })
     @JoinColumn()
     foo: Foo;
 
