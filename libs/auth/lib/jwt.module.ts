@@ -1,6 +1,8 @@
-import { DynamicModule, Global, Module } from "@nestjs/common";
+import { DynamicModule, Global, Module, UseGuards } from "@nestjs/common";
 import { JwtStrategy } from "./jwt.strategy";
 import { JwtService } from "@nestjs/jwt";
+import { ConfigModule } from "@nestjs/config";
+import { AdminGuard, AuthGuard } from "./guards";
 
 export interface JwtAsyncOptions {
     useFactory: (...args: any) => { secret: string; };
@@ -13,9 +15,11 @@ export class JwtModule {
     static forRootAsync(opts: JwtAsyncOptions): DynamicModule {
         return {
             module: JwtModule,
-            imports: opts.imports ?? [],
+            imports: [...opts.imports, ConfigModule],
             providers: [
                 JwtStrategy,
+                AdminGuard,
+                AuthGuard,
                 JwtService,
                 {
                     provide: 'JWT_SECRET',
