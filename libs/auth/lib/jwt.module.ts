@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, Global, Module } from "@nestjs/common";
 import { JwtStrategy } from "./jwt.strategy";
 import { JwtService } from "@nestjs/jwt";
 
@@ -7,7 +7,7 @@ export interface JwtAsyncOptions {
     inject: any[];
     imports: any[];
 }
-
+@Global()
 @Module({})
 export class JwtModule {
     static forRootAsync(opts: JwtAsyncOptions): DynamicModule {
@@ -37,7 +37,7 @@ export class JwtModule {
 
                 }
             ],
-            exports: ['JWT_SECRET', JwtStrategy, JwtService],
+            exports: ['JWT_SECRET', JwtStrategy],
             global: true //TODO
         };
     }
