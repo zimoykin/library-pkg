@@ -18,8 +18,6 @@ export class JwtModule {
             imports: [...opts.imports, ConfigModule],
             providers: [
                 JwtStrategy,
-                AdminGuard,
-                AuthGuard,
                 JwtService,
                 {
                     provide: 'JWT_SECRET',
