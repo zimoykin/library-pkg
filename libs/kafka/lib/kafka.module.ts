@@ -4,6 +4,7 @@ import { KafkaConsumer } from './kafka.consumer';
 import { KafkaProducer } from './kafka.producer';
 import { getTopicToken } from './helpers/get-model-token';
 import { KafkaAsyncOptions } from './interfaces/options.interface';
+import { KafkaAdminService } from './kafka-admin.service';
 
 @Module({})
 export class KafkaModule implements OnModuleDestroy, OnModuleInit {
@@ -46,6 +47,10 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
       {
         provide: 'KAFKA_CONNECTION',
         useValue: KafkaModule.kafka
+      },
+      {
+        provide: 'kafka:admin',
+        useClass: KafkaAdminService
       }
     ];
 
@@ -72,6 +77,10 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
           },
           inject: opts.inject,
         },
+        {
+          provide: 'kafka:admin',
+          useClass: KafkaAdminService
+        }
       ],
       exports: ['KAFKA_CONNECTION'],
     };
