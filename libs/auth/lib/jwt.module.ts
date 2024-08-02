@@ -11,16 +11,6 @@ export interface JwtAsyncOptions {
 @Module({})
 export class JwtModule {
     static forRootAsync(opts: JwtAsyncOptions): DynamicModule {
-        // const providers: Provider[] = [JwtStrategy];
-        // providers.push({
-        //     provide: 'JWT_SECRET',
-        //     useFactory: async (...args) => {
-        //         const config = opts.useFactory(...args);
-        //         return config.secret;
-        //     },
-        //     inject: opts.inject,
-
-        // });
         return {
             module: JwtModule,
             imports: opts.imports ?? [],
@@ -37,7 +27,7 @@ export class JwtModule {
 
                 }
             ],
-            exports: ['JWT_SECRET', JwtStrategy],
+            exports: ['JWT_SECRET', JwtStrategy, JwtService],
             global: true //TODO
         };
     }
