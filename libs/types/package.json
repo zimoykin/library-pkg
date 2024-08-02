@@ -1,6 +1,6 @@
 {
   "name": "@zimoykin/types",
-  "version": "1.0.61",
+  "version": "1.0.62",
   "main": "index.js",
   "dependencies": {
     "@nestjs/common": "^9.0.0",
