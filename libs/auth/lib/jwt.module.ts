@@ -1,7 +1,6 @@
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import { JwtStrategy } from "./jwt.strategy";
 import { JwtService } from "@nestjs/jwt";
-import { ConfigModule } from "@nestjs/config";
 
 export interface JwtAsyncOptions {
     useFactory: (...args: any) => { secret: string; };
