@@ -1,4 +1,4 @@
-name: Version and Publish packages to GitHub Packages
+name: Version and Publish packages to GitHub Packages (v2)
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      packages: ${{ steps.packages.outputs.packages }}
+      filtered_packages: ${{ steps.filter.outputs.filtered_packages }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,6 +37,18 @@ jobs:
           jq -R -s 'split("\n") | map(select(length > 0))' packages.txt > packages.json
           cat packages.json
           echo "::set-output name=packages::$(cat packages.json | jq -c .)"
+      - name: Filter packages based on input
+        id: filter
+        run: |
+          selected_library="${{ github.event.inputs.library }}"
+          if [ "$selected_library" == "all" ]; then
+            cat packages.json
+            echo "::set-output name=filtered_packages::$(cat packages.json | jq -c .)"
+          else
+            filtered=$(jq -c --arg library "$selected_library" '[.[] | select(contains($library))]' packages.json)
+            echo "$filtered"
+            echo "::set-output name=filtered_packages::$(echo $filtered)"
+          fi
 
   build:
     runs-on: ubuntu-latest
@@ -47,7 +59,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        package: ${{ fromJSON(needs.prepare.outputs.packages) }}
+        package: ${{ fromJSON(needs.prepare.outputs.filtered_packages) }}
     steps:
       - uses: actions/checkout@v4
         with:
