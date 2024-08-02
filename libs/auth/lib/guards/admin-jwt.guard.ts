@@ -1,5 +1,4 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 
@@ -7,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AdminGuard implements CanActivate {
     constructor(
         private readonly jwt: JwtService,
-        private readonly config: ConfigService
+        @Inject('JWT_SECRET') private readonly secret: string
     ) { }
     getRequest(context: ExecutionContext) {
         const http = context.switchToHttp();
@@ -23,7 +22,7 @@ export class AdminGuard implements CanActivate {
             try {
                 const { id, role, email } = await this.validate(req.headers.authorization);
                 if (id && role && email) {
-                    if (role ==='admin') {
+                    if (role === 'admin') {
                         req.auth = { id, role, email };
                     }
                 }
@@ -37,8 +36,7 @@ export class AdminGuard implements CanActivate {
     async validate(token: string): Promise<Record<string, string>> {
         const tokenKey = token.split(' ');
         if (tokenKey.length === 2 && tokenKey[0] === 'Bearer' && tokenKey[1]) {
-            const secret = this.config.get('JWT_SECRET');
-            const result = await this.jwt.verify(tokenKey[1], { secret });
+            const result = await this.jwt.verify(tokenKey[1], { secret: this.secret });
             if (result) {
                 return result;
             } else throw new UnauthorizedException();
