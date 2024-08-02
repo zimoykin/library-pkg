@@ -1,4 +1,4 @@
-name: Version and Publish packages to GitHub Packages (v2)
+name: Publish pkgs (v2)
 
 on:
   workflow_dispatch:
