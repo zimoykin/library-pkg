@@ -10,14 +10,15 @@ export interface JwtAsyncOptions {
 @Module({})
 export class JwtModule {
     static forRootAsync(opts: JwtAsyncOptions): DynamicModule {
-        const jwt = opts.useFactory();
         const providers: Provider[] = [
             JwtStrategy,
             {
                 provide: 'JWT_SECRET',
-                useFactory: (config) => {
+                useFactory: (...args) => {
+                    const jwt = opts.useFactory(args);
                     return jwt.secret;
-                }
+                },
+                inject: opts.inject,
             }
         ];
         return {
