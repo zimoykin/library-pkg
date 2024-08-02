@@ -73,10 +73,6 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
           },
           inject: opts.inject,
         },
-        {
-          provide: 'kafka:admin',
-          useClass: KafkaAdminService
-        }
       ],
       exports: ['KAFKA_CONNECTION'],
     };
