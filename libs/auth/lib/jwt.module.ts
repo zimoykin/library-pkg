@@ -2,22 +2,19 @@ import { DynamicModule, Global, Module } from "@nestjs/common";
 import { JwtStrategy } from "./jwt.strategy";
 
 export interface JwtAsyncOptions {
-    useFactory: (...args: any[]) => any;
+    useFactory: () => { secret: string; };
     inject: any[];
     imports: any[];
 }
 
-@Global()
-@Module({
-    providers: [JwtStrategy],
-    exports: [JwtStrategy]
-})
+@Module({})
 export class JwtModule {
     static forRootAsync(opts: JwtAsyncOptions): DynamicModule {
+        const jwt = opts.useFactory();
         return {
             module: JwtModule,
             imports: opts.imports ?? [],
-            providers: [JwtStrategy],
+            providers: [JwtStrategy, { provide: 'JWT_SECRET', useValue: jwt.secret }],
             exports: [JwtStrategy],
             global: true //TODO
         };

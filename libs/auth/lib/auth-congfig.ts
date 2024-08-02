@@ -1,5 +1,5 @@
 import * as Joi from "joi";
 
-export const kafka_schema = {
+export const auth_schema = {
   JWT_SECRET: Joi.string().required(),
 };
