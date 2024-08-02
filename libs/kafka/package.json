@@ -1,6 +1,6 @@
 {
   "name": "@zimoykin/kafka",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "main": "dist/index.js",
   "dependencies": {
     "@nestjs/common": "^10.0.0",
