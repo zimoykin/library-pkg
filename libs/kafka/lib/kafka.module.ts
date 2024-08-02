@@ -94,6 +94,10 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
         useClass: KafkaProducer,
       },
       {
+        provide: 'KAFKA_CLEAR_TOPICS',
+        useValue: this.clearTopics
+      },
+      {
         provide: 'topic',
         useValue: topicName,
       }
@@ -118,7 +122,7 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
     };
   }
 
-  static async clearTopics(topic: string, offset: string, partition: number): Promise<void> {
+  private static async clearTopics(topic: string, offset: string, partition: number): Promise<void> {
     if (KafkaModule.admin) {
       const admin = KafkaModule.admin;
       await admin.listTopics();
