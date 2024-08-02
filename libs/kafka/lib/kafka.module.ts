@@ -48,10 +48,6 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
         provide: 'KAFKA_CONNECTION',
         useValue: KafkaModule.kafka
       },
-      {
-        provide: 'kafka:admin',
-        useClass: KafkaAdminService
-      }
     ];
 
     return {
@@ -131,6 +127,18 @@ export class KafkaModule implements OnModuleDestroy, OnModuleInit {
     };
   }
 
+  static forAdmin(): DynamicModule {
+    return {
+      module: KafkaModule,
+      providers: [
+        {
+          provide: 'kafka:admin',
+          useClass: KafkaAdminService
+        }
+      ],
+      exports: ['kafka:admin'],
+    };
+  }
   private static async clearTopics(topic: string, offset: string, partition: number): Promise<void> {
     if (KafkaModule.admin) {
       const admin = KafkaModule.admin;
