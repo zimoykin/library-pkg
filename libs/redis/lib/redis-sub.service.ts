@@ -11,6 +11,12 @@ export class RedisSubService {
         @Inject('REDIS_TOPIC') private readonly topic: string
     ) { }
 
+    /**
+     * Subscribes to a Redis topic and returns an Observable that emits messages received on that topic.
+     *
+     * @param cb - A callback function that will be called for each message received on the subscribed topic.
+     * @returns An Observable that emits the messages received on the subscribed topic.
+     */
     async subscribe<T>(cb: (data: T) => void) {
         await this.redis.subscribe(this.topic);
         const observable = new Observable<T>((subscriber) => {
