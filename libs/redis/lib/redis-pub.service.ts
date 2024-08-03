@@ -10,7 +10,14 @@ export class RedisPubService {
         @Inject('REDIS_TOPIC') private readonly topic: string
     ) { }
 
-    async publish(message: string) {
+    /**
+     * Publishes the provided data to the configured Redis topic.
+     *
+     * @param data - The data to publish, which can be a string or an object that will be serialized to JSON.
+     * @returns A promise that resolves when the data has been published.
+     */
+    async publish(data: string | Record<string, any>) {
+        const message = typeof data === 'string' ? data : JSON.stringify(data);
         return this.redis.publish(this.topic, message);
     }
 }
