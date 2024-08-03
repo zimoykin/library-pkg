@@ -4,12 +4,15 @@ import { IRedisAsyncOptions } from './interfaces/redis-options-async.interface';
 import { getRedisPubToken, getRedisSubToken } from './helpers/get-topic-token';
 import { RedisSubService } from './redis-sub.service';
 import { RedisPubService } from './redis-pub.service';
+import { getRedisCacheToken } from './get-topic-token';
+import { RedisCacheService } from './redis-cache.service';
 
 @Module({})
 export class RedisModule {
   private static readonly logger = new Logger(RedisModule.name);
   private static pub: Redis;
   private static sub: Redis;
+  private static cache: Redis;
 
   private static makeRedis(opt?: { host?: string, port?: number, password?: string; }) {
     const connectionProperties = {};
@@ -45,7 +48,17 @@ export class RedisModule {
       const redis = this.makeRedis({ host, port, password });
       RedisModule.sub = redis;
     }
+    if (!RedisModule.cache) {
+      const redis = this.makeRedis({ host, port, password });
+      RedisModule.cache = redis;
+    }
     const providers: Provider[] = [
+      {
+        provide: 'REDIS_CONNECTION_CACHE',
+        useFactory: async (): Promise<Redis> => {
+          return this.connection(RedisModule.cache);
+        },
+      },
       {
         provide: 'REDIS_CONNECTION_SUB',
         useFactory: async (): Promise<Redis> => {
@@ -75,6 +88,18 @@ export class RedisModule {
       imports: opts.imports ?? [],
       providers: [
         {
+          provide: 'REDIS_CONNECTION_CACHE',
+          useFactory: async (...args) => {
+            const config = opts.useFactory(...args);
+            if (!RedisModule.cache) {
+              const redis = this.makeRedis({ host: config.host, port: config.port, password: config.password });
+              RedisModule.cache = await this.connection(redis);
+            }
+            return RedisModule.cache;
+          },
+          inject: opts.inject,
+        },
+        {
           provide: 'REDIS_CONNECTION_SUB',
           useFactory: async (...args) => {
             const config = opts.useFactory(...args);
@@ -99,7 +124,7 @@ export class RedisModule {
           inject: opts.inject,
         },
       ],
-      exports: ['REDIS_CONNECTION_PUB', 'REDIS_CONNECTION_SUB'],
+      exports: ['REDIS_CONNECTION_PUB', 'REDIS_CONNECTION_SUB', 'REDIS_CONNECTION_CACHE'],
     };
   }
 
@@ -116,6 +141,20 @@ export class RedisModule {
       {
         provide: getRedisPubToken(topicName),
         useClass: RedisPubService
+      }
+    ];
+    return {
+      module: RedisModule,
+      providers: providers,
+      exports: providers,
+    };
+  }
+
+  static Cache(): DynamicModule {
+    const providers: Provider[] = [
+      {
+        provide: getRedisCacheToken(),
+        useClass: RedisCacheService
       }
     ];
     return {

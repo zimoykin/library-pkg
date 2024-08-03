@@ -1,4 +1,4 @@
-This is module of nestjs app is using to subscribe and publish message on redis
+This is module of nestjs app is using to subscribe and publish message on redis, or use cache if it needs
 
 ## Installation
 
@@ -40,15 +40,10 @@ export class AppModule { }
 put topic into module
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { KafkaModule } from './kafka.module';
-import { QuizzController } from './quizz.controller';
-import { QuizzService } from './quizz.service';
-
 @Module({
   imports: [
-    KafkaModule.forFeature('foo-updated'),
-    KafkaModule.forFeature('quizz-updated'),
+    RedisModule.Cache(), // to use cache import cache service
+    RedisModule.forFeature('some-cases') // to use pub or sub service 
     ],
   controllers: [QuizzController],
   providers: [QuizzService]
@@ -62,21 +57,29 @@ export class QuizzModule { }
 export class QuizzService implements OnModuleInit {
     private readonly logger = new Logger(QuizzService.name);
     constructor(
-        @InjectConsumer('quizz-updated') private readonly consumer: KafkaConsumer,
-        @InjectProducer('quizz-updated') private readonly producerQuizz: KafkaProducer,
-        @InjectProducer('foo-updated') private readonly producerFoo: KafkaProducer,
+        @InjectCacheRedis() private readonly redisCacheService: RedisCacheService, //do not forget to inject
+        @InjectPubRedisTopic('some-cases') private readonly redisPubService: RedisPubService, //do not forget to inject
+        @InjectSubRedisTopic('some-cases') private readonly redisSubService: RedisSubService //do not forget to inject
     ) { }
 
-    onModuleInit() {
-        this.logger.debug(`Consumer subscribed to topic ${Quizz.name}`);
-        this.consumer.listen(data => {
-            this.logger.debug(`Received message ${data} on topic ${Quizz.name}`);
+    async onModuleInit() {
+        this.redisSubService.subscribe((data) => {
+            this.logger.log(data);
         });
     }
 
-    async publish(data: Record<string, any>) {
-        await this.producerQuizz.send({ entityName: Quizz.name, ...data });
-        await this.producerFoo.send({ entityName: Foo.name, ...data });
+    async setValue(key: string, value: string) {
+        await this.redisCacheService.setValue(key, value, { expire: 10_000 });
+        await this.redisPubService.publish(JSON.stringify({ key, value }));
+        return 'OK';
+    }
+
+    async getValue(key: string) {
+        return this.redisCacheService.getValueByKey(key);
+    }
+
+    async deleteValueByKey(key: string) {
+        return this.redisCacheService.setValue(key, null);
     }
 }
 ```
