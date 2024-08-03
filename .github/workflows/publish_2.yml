@@ -94,7 +94,7 @@ jobs:
         run: git fetch origin
 
       - name: Pull latest changes
-        run: git pull origin main --rebase  # Use rebase to integrate changes
+        run: git pull origin ${{ github.ref_name }}
 
       - name: Create .npmrc file in library directory
         working-directory: ${{ matrix.package }}
@@ -128,7 +128,7 @@ jobs:
 
       - name: Push changes
         run: |
-          git push --follow-tags origin main
+          git push --follow-tags origin ${{ github.ref_name }}
           
       - name: Build the package
         working-directory: ${{ matrix.package }}
