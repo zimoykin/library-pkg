@@ -7,9 +7,11 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "@nestjs/mongoose": "^9.2.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "mongoose": "^6.8.3"
   },
   "scripts": {
     "build": "nest build"
