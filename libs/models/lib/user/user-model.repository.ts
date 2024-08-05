@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { User } from "./user.schema";
+import { User } from "./user-model.schema";
 import { ClientSession, Document, Model } from "mongoose";
 import { USER_ROLE } from "./enums/user-role.enum";
 
 @Injectable()
-export class UserRepository {
-    private readonly logger = new Logger(UserRepository.name);
+export class UserModelRepository {
+    private readonly logger = new Logger(UserModelRepository.name);
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<User & Document>
     ) { }

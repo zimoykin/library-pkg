@@ -1,4 +1,4 @@
-export * from './user.repository';
-export * from './user.schema';
+export * from './user-model.repository';
+export * from './user-model.schema';
 export * from './enums/user-role.enum';
-export * from './user.module';
+export * from './user-model.module';

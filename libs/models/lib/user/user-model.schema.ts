@@ -25,6 +25,9 @@ class User extends BaseModel {
     @Prop({ default: null, type: Date, required: false })
     blocked?: Date;
 
+    @Prop()
+    level?: string;
+
     constructor(data: any) {
         super();
         this.email = data?.email;
