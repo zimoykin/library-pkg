@@ -5,8 +5,8 @@ import { ClientSession, Document, Model } from "mongoose";
 import { USER_ROLE } from "./enums/user-role.enum";
 
 @Injectable()
-export class userModelsitory {
-    private readonly logger = new Logger(userModelsitory.name);
+export class UserRepository {
+    private readonly logger = new Logger(UserRepository.name);
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<User & Document>
     ) { }
