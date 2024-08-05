@@ -4,7 +4,7 @@ import { USER_ROLE } from "./enums/user-role.enum";
 
 @Schema({
     timestamps: true,
-    collection: 'users'
+    collection: 'vocabulary_users'
 })
 class User extends BaseModel {
     @Prop({ unique: true })
@@ -41,7 +41,7 @@ class User extends BaseModel {
 const UserSchema = SchemaFactory.createForClass(User);
 UserSchema
     .index({ email: 1 })
-    .index({ createdAt: 1 }, {
+    .index({ confirmed: 1 }, {
         partialFilterExpression: { confirmed: false },
         expireAfterSeconds: 60 * 5,
         name: 'deleting non confirmed users'
