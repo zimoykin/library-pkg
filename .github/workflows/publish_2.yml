@@ -13,6 +13,7 @@ on:
           - 'models'
           - 'types'
           - 'auth'
+          - 'amqp'
           - 'all'
   push:
     branches:
