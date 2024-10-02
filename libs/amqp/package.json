@@ -28,6 +28,6 @@
   "license": "ISC",
   "description": "",
   "repository": {
-    "url": "https://github.com/zimoykin/library-pkg.git"
+    "url": "git+https://github.com/zimoykin/library-pkg.git"
   }
 }
