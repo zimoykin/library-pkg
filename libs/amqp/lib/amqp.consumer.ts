@@ -21,6 +21,13 @@ export class AmqpConsumer implements OnModuleDestroy {
         }
     }
 
+    /**
+     * Subscribe to an AMQP queue and listen for messages.
+     *
+     * @param cb - The callback to call when a message is received. The callback receives the parsed message object as an argument.
+     * @returns A promise that resolves to a function which unsubscribes from the queue and closes the channel when called.
+     * @throws {Error} - If there is an error subscribing to the queue, the promise is rejected with the error.
+     */
     async subscribe<T>(cb: (message: T) => void): Promise<() => Promise<void>> {
         try {
             this.channel = await this.connection.createChannel();
