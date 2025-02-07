@@ -33,7 +33,11 @@ export class RedisModule {
     if (opt?.password) {
       connectionProperties['password'] = opt.password;
     }
-    const redis = new Redis(connectionProperties);
+
+    const redis = opt?.host === 'localhost' ?
+      new Redis(`redis://${opt?.host}:${opt?.port}`)
+      : new Redis(`rediss://default:${opt?.password}@${opt?.host}:${opt?.port}`);
+
     return redis;
   }
 
