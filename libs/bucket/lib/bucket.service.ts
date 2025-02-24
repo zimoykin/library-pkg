@@ -22,17 +22,18 @@ export class CloudflareStorageService {
   async upload(
     fileBuffer: Buffer,
     key: string,
-  ): Promise<{ url: string; key: string; bucketName: string; folder: string }> {
+  ): Promise<{ url: string; key: string; bucketName: string; folder: string; }> {
     const fullKey = `${this.folderName}/${key}`;
     const params: PutObjectCommandInput = {
       Bucket: this.bucketName,
       Key: fullKey,
       Body: fileBuffer,
+      CacheControl: 'no-store, public, max-age=0, must-revalidate',
     };
 
     const upload = new Upload({
       client: this.s3,
-      params,
+      params
     });
 
     try {
@@ -49,7 +50,7 @@ export class CloudflareStorageService {
     }
   }
 
-  async generateSignedUrl(key: string): Promise<{ url: string; expiresIn: number }> {
+  async generateSignedUrl(key: string): Promise<{ url: string; expiresIn: number; }> {
     const fullKey = `${this.folderName}/${key}`;
     const expiresIn = 60 * 60 * 24 * 7; // 7 days
 
