@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as amqplib from 'amqplib';
+import { AMQPTopics } from './common';
 
 @Injectable()
 export class AmqpSender implements OnModuleDestroy {
@@ -10,7 +11,7 @@ export class AmqpSender implements OnModuleDestroy {
         // @ts-ignore
         @Inject('AMQP_CONNECTION') private readonly connection: amqplib.Connection,
         // @ts-ignore
-        @Inject('AMQP_PATTERN') private readonly pattern: string
+        @Inject('AMQP_PATTERN') private readonly pattern: AMQPTopics
     ) { }
 
     /**
@@ -21,7 +22,7 @@ export class AmqpSender implements OnModuleDestroy {
      * 
      * @returns A promise that resolves when the channel is initialized.
      */
-    
+
     async initChannel() {
         if (this.channel) {
             return;
@@ -29,10 +30,10 @@ export class AmqpSender implements OnModuleDestroy {
         this.logger.debug(`Initialize AMQP-Sender to ${this.pattern}`);
         const channel = await this.connection.createConfirmChannel();
         channel.prefetch(1);
-        channel.assertQueue(this.pattern, {
+        channel.assertQueue(`${this.pattern}.main`, {
             durable: true,
         });
-        this.channel = channel; 
+        this.channel = channel;
     }
 
     async onModuleDestroy() {

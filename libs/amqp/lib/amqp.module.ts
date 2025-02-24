@@ -4,6 +4,7 @@ import { getConsumerToken, getSenderToken } from './decorators/sender-token.help
 import { AmqpSender } from './amqp.sender';
 import { AmqpConsumer } from './amqp.consumer';
 import { IConnectionAsyncOptions, IConnectionOptions } from './interfaces/connection-options.interface';
+import { AMQPTopics } from './common';
 
 @Module({})
 export class AmqpModule {
@@ -72,19 +73,19 @@ export class AmqpModule {
     };
   }
 
-  static forFeature(pattern: string): DynamicModule {
-    const lowerPattern = pattern.toLowerCase();
+  static forFeature(topic: AMQPTopics): DynamicModule {
+    const pattern = `${String(topic).toLowerCase()}`;
     const providers: Provider[] = [
       {
         provide: 'AMQP_PATTERN',
-        useValue: lowerPattern
+        useValue: pattern
       },
       {
-        provide: getSenderToken(lowerPattern),
+        provide: getSenderToken(pattern),
         useClass: AmqpSender,
       },
       {
-        provide: getConsumerToken(lowerPattern),
+        provide: getConsumerToken(pattern),
         useClass: AmqpConsumer,
       }
     ];

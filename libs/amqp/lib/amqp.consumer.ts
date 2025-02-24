@@ -1,11 +1,13 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import * as amqplib from 'amqplib';
 import { Observable, Subscriber } from 'rxjs';
+import { AMQP_TOPICS, validateIncommingMsg } from './common';
 
 @Injectable()
 export class AmqpConsumer implements OnModuleDestroy {
     private readonly logger = new Logger(AmqpConsumer.name);
     private channel: amqplib.Channel;
+    private dlq_channel: amqplib.Channel;
 
     constructor(
         // @ts-ignore
@@ -30,15 +32,26 @@ export class AmqpConsumer implements OnModuleDestroy {
      */
     async subscribe<T>(cb: (message: T) => void): Promise<() => Promise<void>> {
         try {
+
+            this.logger.debug(`Initializing AMQP Consumer for queue: ${this.pattern}`);
+
             this.channel = await this.connection.createChannel();
-            await this.channel.assertQueue(this.pattern, { durable: true });
+            this.dlq_channel = await this.connection.createChannel();
+
+            await this.channel.assertQueue(`${this.pattern}.main`, { durable: true });
+            await this.dlq_channel.assertQueue(`${this.pattern}.dlq`, { durable: true });
+
             this.channel.prefetch(1);
-            this.logger.debug(`Initialized AMQP Consumer for pattern: ${this.pattern}`);
+            
+            this.logger.debug(`Initialized AMQP Consumer for queue: ${this.pattern}`);
 
             const observable = new Observable((subscriber: Subscriber<T>) => {
-                this.channel.consume(this.pattern, (message) => {
+                this.channel.consume(this.pattern, async (message) => {
                     if (message !== null) {
+
                         const parsedMessage = JSON.parse(message.content.toString()) as T;
+                        await validateIncommingMsg(parsedMessage);
+
                         subscriber.next(parsedMessage);
                         this.channel.ack(message);
                     }
@@ -56,6 +69,7 @@ export class AmqpConsumer implements OnModuleDestroy {
             if (error instanceof Error) {
                 this.logger.error(`Failed to subscribe to AMQP queue: ${error.message}`);
             }
+            await this.dlq_channel.sendToQueue(`${this.pattern}.dlq`, Buffer.from(JSON.stringify(error)));
             throw error;
         }
     }

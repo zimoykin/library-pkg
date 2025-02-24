@@ -1,0 +1,28 @@
+{
+  "name": "@zimoykin/bucket",
+  "version": "1.0.62",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "@aws-sdk/lib-storage": "^3.750.0",
+    "@aws-sdk/s3-request-presigner": "^3.750.0",
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/core": "^9.0.0",
+    "@nestjs/platform-express": "^9.0.0",
+    "joi": "^17.7.0"
+  },
+  "scripts": {
+    "build": "nest build"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^9.0.0",
+    "@nestjs/schematics": "^9.0.0",
+    "typescript": "^4.5.4"
+  },
+  "author": "Dmitrii Zimoikin",
+  "license": "ISC",
+  "description": "",
+  "repository": {
+    "url": "https://github.com/zimoykin/library-pkg.git"
+  }
+}
