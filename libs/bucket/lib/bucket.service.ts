@@ -28,7 +28,6 @@ export class CloudflareStorageService {
       Bucket: this.bucketName,
       Key: fullKey,
       Body: fileBuffer,
-      ACL: 'public-read', // Делаем файл публичным
     };
 
     const upload = new Upload({
