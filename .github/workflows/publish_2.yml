@@ -14,6 +14,7 @@ on:
           - 'types'
           - 'auth'
           - 'amqp'
+          - 'bucket'
           - 'all'
   push:
     branches:
