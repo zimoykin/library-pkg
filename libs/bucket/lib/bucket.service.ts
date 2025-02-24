@@ -37,6 +37,13 @@ export class CloudflareStorageService {
     });
 
     try {
+      await this.s3.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: fullKey,
+        })
+      );
+
       await upload.done();
       return {
         url: `https://${this.bucketName}.${this.accountId}.r2.cloudflarestorage.com/${fullKey}`,
