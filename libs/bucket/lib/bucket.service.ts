@@ -1,6 +1,8 @@
 import {
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -75,6 +77,49 @@ export class CloudflareStorageService {
     } catch (err) {
       this.logger.error('Error generating signed URL:', err);
       throw new Error('Failed to generate signed URL for the requested file');
+    }
+  }
+
+  async deleteFolder(folderName: string): Promise<void> {
+    try {
+      const listParams = {
+        Bucket: this.bucketName,
+        Prefix: `${folderName}/`,
+      };
+
+      let isTruncated = true;
+      let continuationToken: string | undefined;
+
+      while (isTruncated) {
+        const command = new ListObjectsV2Command({
+          ...listParams,
+          ContinuationToken: continuationToken,
+        });
+
+        const response = await this.s3.send(command);
+
+        if (!response.Contents || response.Contents.length === 0) {
+          this.logger.log(`No objects found in folder: ${folderName}`);
+          return;
+        }
+
+        const deleteParams = {
+          Bucket: this.bucketName,
+          Delete: {
+            Objects: response.Contents.map(({ Key }) => ({ Key })),
+          },
+        };
+
+        await this.s3.send(new DeleteObjectsCommand(deleteParams));
+
+        isTruncated = response.IsTruncated ?? false;
+        continuationToken = response.NextContinuationToken;
+      }
+
+      this.logger.log(`Folder '${folderName}' deleted successfully.`);
+    } catch (err) {
+      this.logger.error("Error deleting folder:", err);
+      throw new Error("Failed to delete folder from S3");
     }
   }
 
