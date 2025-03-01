@@ -1,6 +1,6 @@
 {
   "name": "@zimoykin/bucket",
-  "version": "1.0.66",
+  "version": "1.0.67",
   "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
